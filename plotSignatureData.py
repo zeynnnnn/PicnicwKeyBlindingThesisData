@@ -9,7 +9,6 @@ import numpy as np
 def read_odsmy(filename, microsecond, sheet_no=0, header=0):
     # tab = ezodf.opendoc(filename=filename).sheets[sheet_no]
     df = read_ods(filename, sheet_no)
-
     # df = pd.DataFrame({col[header].value: [x.value for x in col[header + 1:]]
     #                  for col in tab.columns()})
     for col in list(df.columns):
@@ -23,8 +22,6 @@ def read_odsmy(filename, microsecond, sheet_no=0, header=0):
 
 def save_Bbox(sheet_no, table_name, rowNum, oneRow, microsecond, explainationRow):
     data = read_odsmy('testResultRaw.ods', microsecond, sheet_no)
-    print(table_name)
-
     data.columns = data.columns.str.replace('Picnic', 'P')
     fig, axs = plt.subplots(rowNum, oneRow)
     plt.setp(axs.flat, ylabel=explainationRow)  # xlabel='X-label',
@@ -39,7 +36,6 @@ def save_Bbox(sheet_no, table_name, rowNum, oneRow, microsecond, explainationRow
     #            size='large', ha='right', va='center')
     description = ''
     for col in list(data.columns):
-        print(data[col].describe())
         latexName = (col.replace('_', '\_'))
         description = description + latexName.replace('P', 'Picnic') + ' & ' + str(data[col].min()) + ' & ' + \
                       str(data[col].mean()) + ' & ' + str(data[col].max()) + '\\\\ \n'
@@ -55,7 +51,6 @@ def save_Bbox(sheet_no, table_name, rowNum, oneRow, microsecond, explainationRow
         if coll % oneRow == 0:
             row = row + 1
             coll = 0
-    print(description)
     for index in range(len(data.columns), rowNum * oneRow):
         row = math.floor(len(data.columns) / oneRow)
         col = len(data.columns) % oneRow
@@ -73,8 +68,6 @@ def save_Bbox(sheet_no, table_name, rowNum, oneRow, microsecond, explainationRow
 
 def save_BboxAllTogether(sheet_no, table_name, rowNum, oneRow, microsecond, explainationRow):
     data = read_odsmy('testResultRaw.ods', microsecond, sheet_no)
-    print(table_name)
-
     data.columns = data.columns.str.replace('Picnic', 'P')
     colors = ['#73020C', '#229954', '#D94D1A', '#FFC300', '#A3E4D7', '#D7BDE2', '#82E0AA', '#2C3E50', '#AF7AC5',
               '#AED6F1', '#E74C3C', '#CCD1D1', '#633974', '#2874A6']
@@ -93,7 +86,7 @@ def save_BboxAllTogetherLog(sheet_no, table_name, rowNum, oneRow, microsecond, e
     data.columns = data.columns.str.replace('Picnic', 'P')
     colors = ['#73020C', '#229954', '#D94D1A', '#FFC300', '#A3E4D7', '#D7BDE2', '#82E0AA', '#2C3E50', '#AF7AC5',
               '#AED6F1', '#E74C3C', '#CCD1D1', '#633974', '#2874A6']
-    print(data.columns)
+
     data.boxplot(labels=list(data.columns))
     plt.ylabel(explainationRow)
     plt.yscale('log')
@@ -108,7 +101,7 @@ def saveSizeVSDur():
     dataDur = pd.Series(read_odsmy('testResultRaw.ods', False, 3).mean(), name= 'Sig_Dur(avg)').to_frame()
 
     df = pd.concat([dataSize, dataDur], axis=1, join="inner")
-    print(df)
+
     colors = ['#73020C', '#229954', '#D94D1A', '#FFC300', '#A3E4D7', '#D7BDE2', '#82E0AA', '#2C3E50', '#AF7AC5',
               '#AED6F1', '#E74C3C', '#CCD1D1']
     l = 0
@@ -144,6 +137,7 @@ def main():
     save_BboxAllTogetherLog(3, "signDur", 3, 5, False, 'Run Time[ms]')
     save_BboxAllTogetherLog(4, "keyblindDur", 3, 5, True, 'Run Time[\u03bcs]')
     save_BboxAllTogetherLog(5, "keygenDur", 3, 5, True, 'Run Time[\u03bcs]')
+    saveSizeVSDur()
 
 
-saveSizeVSDur()
+main()
