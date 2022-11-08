@@ -11,12 +11,30 @@ def read_odsmy(filename, microsecond, sheet_no=0, header=0):
     df = read_ods(filename, sheet_no)
     # df = pd.DataFrame({col[header].value: [x.value for x in col[header + 1:]]
     #                  for col in tab.columns()})
+    l1=list()
+    l3 = list()
+    l5 = list()
+    rest = list()
     for col in list(df.columns):
         if isinstance(df[col][0], str):
-            df[col] = (df[col].str.replace(r' ms', '000'))
-            df[col] = (df[col].str.replace(r'\D', '')).astype('int64')
+            df[col] = (df[col].str.replace(r' ms', '000',regex=True))
+            df[col] = (df[col].str.replace(r'\D', '',regex=True)).astype('int64')
             if not microsecond:
                 df[col] = df[col] / 1000
+
+        if 'L1' in col:
+            l1.append(col)
+        elif 'L3' in col:
+            l3.append(col)
+        elif 'L5' in col:
+            l5.append(col)
+        else:
+            rest.append(col)
+
+
+    order=l1+l3+l5+rest
+    df = df[order]
+    print(df)
     return df
 
 
